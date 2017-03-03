@@ -6,6 +6,16 @@
 
 ***
 
+# Testing C#
+
+***
+
+# We'll Discuss
+## Elements of Testable Code
+## & Tools of the Trade
+
+***
+
 # Elements of Testable Code
 
 ***
