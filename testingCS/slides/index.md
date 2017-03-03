@@ -14,7 +14,7 @@
 - Prefer Functions Over Methods
 - Use More Functions
 - Using Pure Functions
-- Immutability - The Applaudable Fear of Change
+- Immutability
 
 ***
 
@@ -50,7 +50,6 @@ By returning a value, you have a way to know/assert what happened
 
 We have to test with every permutation of those params, in each possible state.
 Contributes to code's [cyclomatic complexity](https://en.wikipedia.org/wiki/Cyclomatic_complexity).
-
 
 ---
 
@@ -100,4 +99,4 @@ side effects example
 ***
 
 # Immutability
-## Avoid Change
+## The Applaudable Fear of Change
