@@ -108,5 +108,32 @@ side effects example
 
 ***
 
+### Pass Values When possible
+
+Arguments that are complex objects can be in any number of possible states, all of which will need to be tested against.
+Limiting your args to values means less state to manage = simpler tests
+
+***
+
 # Immutability
 ## The Applaudable Fear of Change
+
+***
+
+# Readibility
+
+***
+
+## Avoid Mocking
+## Be Explicit - name everything
+## Keep noise out of the body of your test with AutoData
+
+***
+
+#AutoData
+
+## Each Test is a Scene
+### There are starring roles, supporting actors, and extras
+### Extras = Noise, Good use of AutoData
+
+
