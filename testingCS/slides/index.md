@@ -17,22 +17,33 @@
 ***
 
 # Elements of Testable Code
+### Code that is Simple to Test
 
 ***
 
 ## Taking Some Notes From Functional Programming
-- Prefer Functions Over Methods
+- Embrace Functions
 - Use More Functions
 - Using Pure Functions
 - Immutability
 
 ***
 
-## Prefer Functions
+# Prefer Functions 
+### Functions Always Return a Value
+
+---
+
+example of function returning a value making it easy to assert what happened
+
+---
 
 # Avoid Void
-## Void Methods are Black Boxes
-By returning a value, you have a way to know/assert what happened
+### Void Methods are Black Boxes
+
+---
+
+example of void method illustrating how we need to as somebody else what happened
 
 ***
 
@@ -48,14 +59,7 @@ By returning a value, you have a way to know/assert what happened
     [lang=cs]
     public string DoAllTheThings(int userId, bool isSober, int launchCode)
     {
-        var user = repo.Get(id);
-        
-        if (IsValid(launchCode))
-        {
-            user.CanLaunch = true;
-        }
-
-        if(user.CanLaunch)
+        // example of complex method
     }
 
 We have to test with every permutation of those params, in each possible state.
@@ -64,6 +68,8 @@ Contributes to code's [cyclomatic complexity](https://en.wikipedia.org/wiki/Cycl
 ---
 
 ## Does One Thing
+
+example of functionality broken up into functions
 
     [lang=cs]
     public string DoThisThing(string id, string launchCode)
@@ -81,6 +87,8 @@ Contributes to code's [cyclomatic complexity](https://en.wikipedia.org/wiki/Cycl
 ## Allows Us To Do Complex Tasks 
 ## With Tested Code
 
+example of original process now using functions
+
     [lang=cs]
     public string DoAllTheThings(string id, string launchCode)
     {
@@ -94,7 +102,7 @@ Contributes to code's [cyclomatic complexity](https://en.wikipedia.org/wiki/Cycl
 ***
 
 # Pure Functions
-### You might be a pure function if
+### Your Function Might be Pure if
 <p class="fragment fadeIn">Given the same input, you always produce the same output</p>
 <p class="fragment fadeIn">Have no side-effects</p>
 
@@ -106,12 +114,9 @@ IO example
 
 side effects example
 
-***
+---
 
-### Pass Values When possible
-
-Arguments that are complex objects can be in any number of possible states, all of which will need to be tested against.
-Limiting your args to values means less state to manage = simpler tests
+pure example
 
 ***
 
@@ -121,11 +126,39 @@ Limiting your args to values means less state to manage = simpler tests
 ***
 
 # Readibility
-
+ 
 ***
 
 ## Avoid Mocking
+
+### Pass Values Not Value Providers
+
+Value providers require setup
+Values just need to be set = Less noise
+
+---
+
+example using provider
+
+--- 
+
+same example using passed values
+
+***
+
 ## Be Explicit - name everything
+
+---
+
+example with ambiguoius values
+
+--- 
+
+example with named values
+
+
+***
+
 ## Keep noise out of the body of your test with AutoData
 
 ***
