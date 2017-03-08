@@ -144,10 +144,6 @@
 
 ---
 
-example of test with lots of mocking
-
----
-
 ### Pass Values Not Value Providers
 
 <p>Value Providers Require Setup</p>
@@ -298,35 +294,148 @@ example of test with lots of mocking
 --- 
 
 ### AutoFixture
-### AutoFixture + XUnit
-### AutoFixture + FakeItEasy
+### FakeItEasy
+### AutoFixture + XUnit Plugin
+### AutoFixture + FakeItEasy Plugin
 
 ***
 
-use autofixture to create values and instances
+## Using AutoFixture to Create Values and Instances
 
 ---
 
-examples
+## Using Create
+
+    [lang=cs]
+    var fixture = new Fixture();
+    var name = fixture.Create<string>();
+    var person = fixture.Create<Person>();
 
 ---
 
-customizing fixtures
+## Using Build
+
+    [lang=cs]
+    var fixture = new Fixture();
+    var name = fixture.Create<string>();
+    var person = fixture.Build<Person>()
+        .With( p => p.Name, name);
+
+---
+
+## Customizing
+
+    [lang=cs]
+    var fixture = new Fixture();
+    fixture.Register<string>(() => "asshat");
+    string result = fixture.Create<string>(); // = 'asshat'
+
+    var mc = fixture.Create<MyClass>();
+    fixture.Customize<MyViewModel>(ob => ob
+        .Do(x => x.AvailableItems.Add(mc))
+        .With(x => x.SelectedItem, mc));
+
+    var mvm = fixture.Create<MyViewModel>();
+
+---
+
+## Custom Fixtures
+
+    [lang=cs]
+    class MyFixture : Fixture
+    {
+        public MyFixture()
+        {
+            Customize<Person>( b => b
+                .With(x => x.Name, "asshat"));
+        }
+    }
+
+    var fixture = new MyFixture();
 
 ***
 
-AutoFixture + XUnit Theories = AutoData
-(heart) AutoData
+## Mocking with FakeItEasy
+
+---
+
+## Using Mocks To Control Functionality
+
+    [Fact]
+    public void Add_returns_expected_value()
+    {
+        var x = 1;
+        var y = 2;
+        var mockNumberService = A.Fake<INumberService>();
+
+        A.CallTo(() => mockNumberService.GetX())
+            .Returns(x);
+        A.CallTo(() => mockNumberService.GetY())
+            .Returns(y);
+
+        // 
+    }
+
+
+---
+
+## Using Mocks To Assert Functionality
+
+    [Fact]
+    public void Add_returns_expected_value()
+    {
+        var x = 1;
+        var y = 2;
+        var mockNumberService = A.Fake<INumberService>();
+
+        Adder.Add(mockNumberService);
+
+        A.CallTo(() => mockNumberService.getX())
+            .MustHaveHappened();
+    }
+
+***
+
+## AutoFixture + XUnit Theories = AutoData
+
+---
+
+## Theories = Paramaterized Tests
+<hr/>
+## AutoData Supplies Random Values for Paramaters
 
 ---
 
 ## Each Test is a Scene
-### There are starring roles, supporting actors, and extras
-### Extras = Noise, Good use of AutoData
+### Starring Roles, Supporting Roles,<br/> and Extras
+### Extras = Noise = Good use of AutoData
 
 ---
 
-example of using autodata
+    [lang=cs]
+    [Fact]
+    public void Add_returns_expected_value()
+    {
+        var x = 1; // extra
+        var y = 2; // extra
+
+        var sut = Add(x,y); // star
+        var expected = 3; // supporting
+
+        Assert.Equal(expected, sut);
+    }
+
+---
+
+    [lang=cs]
+    [Theory, AutoData]
+    public void Add_returns_expected_value(int x, int y)
+    {
+        var sut = Add(x,y);
+        var expected = x + y;
+
+        Assert.Equal(expected, sut);
+    }
 
 ---  
 
@@ -336,20 +445,20 @@ custom autodata using custom fixtures
 
 ***
 
-Caveats when using AutoData
+## Some Caveats when using AutoData
 
 ---
 
-## The Entire Tree Structure Will be Hydrated
+## The Entire Tree Structure
+## Will be Hydrated
 - This can be expensive if your tree structure is deep\*
-- There can be dependencies that may require setup before AF can properly hydrate
 - Any work kicked off in any constructors in the tree will be excuted\*
 
-\* But you'd never do that, right...
+\* But you'd never do that, right!
 
 ***
 
-AutoFixture + FakeItEasy for Mocking
+## AutoFixture + FakeItEasy for Mocking
 
 ---
 
@@ -362,6 +471,16 @@ mocking with AutoFixture + FakeItEasy
 ---
 
 Mocking with AutoData
+
+***
+
+# Questions? 
+
+***
+
+# Resources
+
+
 
 
 
