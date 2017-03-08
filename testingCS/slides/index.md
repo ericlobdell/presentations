@@ -6,122 +6,130 @@
 
 ***
 
-# Testing C#
+# Road to Simpler C# Testing
 
 ***
 
 # We'll Discuss
 ## Elements of Testable Code
-## & Tools of the Trade
+## Elements of Simple Tests
+## Tools
 
 ***
 
-# Elements of Testable Code
-### Code that is Simple to Test
+# Elements of Testable Code:
+<p class="fragment fadeIn">Code that is Predictible</p>
+<p class="fragment fadeIn">Code that is Easy to Run in Isolation</p>
+<p class="fragment fadeIn">Code that Doesn't require Much Setup.</p>
 
 ***
 
 ## Taking Some Notes From Functional Programming
-- Embrace Functions
-- Use More Functions
-- Using Pure Functions
-- Immutability
+<p>How Some Functional Concepts Influence Your Code's Testabliity</p>
 
 ***
 
 # Prefer Functions 
-### Functions Always Return a Value
+*Functions: Expressions That Always Return a Value*
 
 ---
 
-example of function returning a value making it easy to assert what happened
+    [lang=cs]
+    public string Add(int x, int y) => x + y;
+
+    [Fact]
+    public void Add_returns_expected_value()
+    {
+        var sum = Add(1,2);
+        Assert.Equal(3, sum);
+    }
 
 ---
 
 # Avoid Void
-### Void Methods are Black Boxes
+<p>Void Methods are Black Boxes</p>
+<p>You Have to Ask Someone Else What Happened</p>
 
 ---
-
-example of void method illustrating how we need to as somebody else what happened
-
-***
-
-# More Functions
-
-### Prefer More Small Functions 
-### That do One Thing
-
----
-
-## Does Too Much
 
     [lang=cs]
-    public string DoAllTheThings(int userId, bool isSober, int launchCode)
+    public void Add(int x, int y)
     {
-        // example of complex method
-    }
+        myService.DoAdd(x,y);
+    };
 
-We have to test with every permutation of those params, in each possible state.
-Contributes to code's [cyclomatic complexity](https://en.wikipedia.org/wiki/Cyclomatic_complexity).
-
----
-
-## Does One Thing
-
-example of functionality broken up into functions
-
-    [lang=cs]
-    public string DoThisThing(string id, string launchCode)
+    [Fact]
+    public void Add_calls_the_right_method_with_the_right_values()
     {
-        // single piece of work
+        var mockService = Mock<MyService>();
+        var x = 1;
+        var y = 2;
+
+        Add(x,y);
+
+        A.CallTo(() => mockService.DoAdd(x,y))
+            .MustHaveHappened();
     }
-
-    public string DoThatThing(string id, string launchCode)
-    {
-        // single piece of work
-    }
-
----
-
-## Allows Us To Do Complex Tasks 
-## With Tested Code
-
-example of original process now using functions
-
-    [lang=cs]
-    public string DoAllTheThings(string id, string launchCode)
-    {
-        DoThisThing(id);
-        DoThatThing(launchCode);
-    }
-
- Now we only have to test that the right code is executed.</br>
- We've already confirmed it's behavior.
 
 ***
 
 # Pure Functions
-### Your Function Might be Pure if
-<p class="fragment fadeIn">Given the same input, you always produce the same output</p>
-<p class="fragment fadeIn">Have no side-effects</p>
+
+<p>Given the same input, always produces the same output</p>
+<p>Have no side-effects</p>
 
 ---
 
-IO example
+    [lang=cs]
+    public string Add(int x, int y) => x + y;
 
---- 
-
-side effects example
+    [Fact]
+    public void Add_returns_expected_value()
+    {
+        var sum = Add(1,2);
+        Assert.Equal(3, sum);
+    }
 
 ---
 
-pure example
+    [lang=cs]
+    public void Add(int x, int y)
+    {
+        var z = myService.GetValue(x);
+        myInstance.Property = z;
+        myOtherService.DoAdd(myInstance);
+    };
+
+    [Fact]
+    public void Add_properly_calls_method_on_my_service()
+    {
+        //
+    }
+
+    [Fact]
+    public void Add_sets_state_on_instance_correctly()
+    {
+        //
+    }
+
+    [Fact]
+    public void Add_properly_calls_method_on_other_service_with_instance()
+    {
+        //
+    }
 
 ***
 
 # Immutability
 ## The Applaudable Fear of Change
+
+---
+
+When you code changes the state of an object, that state needs to be tracked and tested.
+
+***
+
+# Elements of Simple Tests
 
 ***
 
@@ -156,6 +164,17 @@ example with ambiguoius values
 
 example with named values
 
+
+***
+
+*** 
+
+# Tools
+
+<p>AutoFixture</p>
+<p>FakeItEasy</p>
+<p>AutoFixture + XUnit</p>
+<p>AutoFixture + FakeItEasy</p>
 
 ***
 
