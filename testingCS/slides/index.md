@@ -6,14 +6,25 @@
 
 ***
 
-# Road to Simpler C# Testing
+# Simpler C# Testing
+
+--- 
+
+define simple
+
+---
+
+example of complex test
+
+--- 
+
+example of simple test
 
 ***
 
 # We'll Discuss
-## Code That's Easy to Test
-## Elements of Simple Tests
-## Tools
+## Code That Makes for Simple Tests
+## Tools That Can Simplify Your Tests
 
 ***
 
@@ -26,23 +37,6 @@
 
 ***
 
-# Prefer Functions 
-*Functions: Expressions That Always Return a Value*
-
----
-
-    [lang=cs]
-    public string Add(int x, int y) => x + y;
-
-    [Fact]
-    public void Add_returns_expected_value()
-    {
-        var sum = Add(1,2);
-        Assert.Equal(3, sum);
-    }
-
----
-
 # Avoid Void
 <p>Void Methods are Black Boxes</p>
 <p>You Have to Ask Someone Else What Happened</p>
@@ -50,27 +44,52 @@
 ---
 
     [lang=cs]
-    public void Add(int x, int y)
+    public void DoThing(int x, int y)
     {
-        myService.DoAdd(x,y);
+        myService.Thing(x,y);
     };
 
     [Fact]
-    public void Add_calls_the_right_method_with_the_right_values()
+    public void DoThing_calls_the_right_method_with_the_right_values()
     {
         var mockService = A.Fake<IMyService>();
         var x = 1;
         var y = 2;
 
-        Add(x,y);
+        DoThing(x,y);
 
-        A.CallTo(() => mockService.DoAdd(x,y))
+        A.CallTo(() => mockService.Thing(x,y))
             .MustHaveHappened();
     }
 
 ---
 
+# Prefer Functions 
+*Functions: Expressions That Always Return a Value*
+
+---
+
+    [lang=cs]
+    public MyResultType DoThing(int x, int y)
+    {
+        return myService.Thing(x,y);
+    };
+
+    [Fact]
+    public void DoThing_calls_the_right_method_with_the_right_values()
+    {
+        var x = 1;
+        var y = 2;
+
+        var sut = DoThing(x,y);
+
+        Assert.True(sut.Success);
+    }
+
+---
+
 ### You're Free to Return Whatever You Need to Confirm Behavior! So do it!
+</hr>
 ### You're Writing Code Around Your Tests, Not Tests Aroud Your Code
 
 ***
