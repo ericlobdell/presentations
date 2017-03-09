@@ -624,9 +624,7 @@
 
 ---
 
----
-
-## Creating a Mock With AuotFixture + FakeItEasy
+## Creating a Mock With AutoFixture + FakeItEasy
 
     [lang=cs]
     var fixture = new Fixture()
@@ -653,7 +651,7 @@ Nothing
 
 <hr>
 
-We Only Use One Tools Vocabluary/Idioms, Which Adds Consistency, Which is Very Valuable
+We Only Use One Tool's Vocabluary/Idioms, Which Adds Consistency, Which is Very Valuable
 
 ---
 
@@ -707,6 +705,11 @@ We Only Use One Tools Vocabluary/Idioms, Which Adds Consistency, Which is Very V
 <hr>
 ## Be Mindful to Keep All Relavent Information in the Body of Your Tests
 
+***
+
+# Explore
+<hr>
+### These Tools can do Much More Than What I've Covered
 
 ***
 
