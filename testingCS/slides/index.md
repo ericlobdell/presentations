@@ -593,8 +593,6 @@
         // on FieldForwardFixture
     }
 
----
-
 ***
 
 ## Some Caveats when using AutoData
@@ -664,21 +662,25 @@ We Only Use One Tool's Vocabluary/Idioms, Which Adds Consistency, Which is Very 
 ---
 
     [lang=cs]
+    public class FieldForwardFixture : Fixture
+    {
+        public FieldForwardFixture()
+        {
+            Customize(new AutoFakeItEasyCustomization());
+        }
+    }
+
     public class AutoFieldForwardData : AutoDataAttribute
     {
         public AutoFieldForwardData()
-            : base(new FieldForwardFixture()) 
-        {
-            Customize(new AutoFakeItEasyCustomization());
-            ...
-        }
+            : base(new FieldForwardFixture()){ }
     }
 
 ---
 
     [lang=cs]
     [Theory, AutoFieldForwardData]
-    public void TryRegisterSession_caches_new_token_when_no_token_cached_for_user_id(
+    public void TryRegisterSession_returns_true_when_no_token_cached( 
         [Frozen]ICacheService<string,string> cacheService, 
         MemoryCache blackList, 
         string newToken, 
@@ -691,8 +693,7 @@ We Only Use One Tool's Vocabluary/Idioms, Which Adds Consistency, Which is Very 
 
       var result = sut.TryRegisterSession(userId, newToken);
 
-      A.CallTo(() => cacheService.AddOrReplace(userId, newToken))
-        .MustHaveHappened();
+      Assert.True(result);
     }
 
 ***
