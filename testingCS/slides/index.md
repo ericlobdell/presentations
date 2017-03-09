@@ -97,6 +97,7 @@ example of simple test
 # Pure Functions
 
 <p>Given the same input, always produces the same output</p>
+<p>Stateless</p>
 <p>Have no side-effects</p>
 
 ---
@@ -148,10 +149,6 @@ example of simple test
         //
     }
 
-***
-
-## Writing Tests That are Easy to Understand
- 
 ***
 
 ## Avoid Mocking
@@ -212,6 +209,10 @@ example of simple test
 
 ***
 
+## Writing Tests That are Easy to Understand
+ 
+***
+
 # Be Explicit 
 ### Name Everything - No 'Magic Values'
 
@@ -243,6 +244,11 @@ example of simple test
 
         var ex = Assert.Throws(() => sut.DoWork(userId, invalidWorkType));
     }
+
+---
+
+## Take Every Opportunity to Add Meaning to the Elements of Your Tests
+### Strive for Obvious
 
 ***
 
