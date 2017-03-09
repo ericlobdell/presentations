@@ -10,30 +10,88 @@
 
 --- 
 
-define simple
+# The Value of Testing
+## Tests = Production Code
 
 ---
 
-example of complex test
+## Complex vs Simple
+
+---
+
+### A Complex Test Requires a Lot of Setup in the Body of the Test, Which Creates a lot of 'Noise'
+
+---
+
+    [lang=cs]
+    [Fact]
+    public void ServiceWriteService_Create_CallsDomain()
+    {
+      Fixture fixture = GetFixture();
+      var sut = GetSut();
+      var action = fixture.Create<CreateServiceAction>();
+      var identity = fixture.Create<TestIdentity>();
+
+      A.CallTo(() => ident.Identity).Returns(identity);
+      A.CallTo(() => serviceService.Get(action.Name, identity.CompanyId)).Returns(null);
+
+      var domainAction = new DomainActions.CreateAction()
+      {
+        CompanyId = identity.CompanyId,
+        Name = action.Name
+      };
+
+      var likeness = new Likeness<DomainActions.CreateAction, 
+        DomainActions.CreateAction>(domainAction);
+
+      sut.Create(action);
+
+      A.CallTo(() => serviceService.CreateService(A<DomainActions.CreateAction>
+        .That.Matches(a => likeness.Equals(a))))
+        .MustHaveHappened();
+    }
 
 --- 
 
-example of simple test
+### A Simpe Test Requires Less Setup, and Keeps as Much Noise out of the Body of the Test as Possible
+
+---
+
+### A Simple Test
+    [lang=cs]
+    [Theory, AutoIdentityServerData]
+    public void TryRegisterSession_returns_true_when_no_token_cached( [Frozen]ICacheService<string,string> cacheService, MemoryCache blackList, string newToken, string userId)
+    {
+      var sut = new SessionManagementService(cacheService, blackList);
+
+      A.CallTo(() => cacheService.Get(userId))
+        .Returns(null);
+
+      var result = sut.TryRegisterSession(userId, newToken);
+
+      Assert.True(result);
+    }
+
+---
+
+## The Value of Simple Tests
+</hr>
+
+- Easy to Read
+- Easy to See What's Being Tested
+- Easy to Debug
+- Easy to Maintain/Modify
+- More Reliable
 
 ***
 
-# We'll Discuss
-## Code That Makes for Simple Tests
-## Tools That Can Simplify Your Tests
+## We Get Simpler Tests By
+- Adopting Certain Coding Habits
+- Using the Right Tools
 
 ***
 
-# Code That's Easy To Test
-
-***
-
-## Taking Some Notes From Functional Programming
-<p>How Some Functional Concepts Can Aid Your Code's Testabliity</p>
+# Coding for Simpler Tests
 
 ***
 
@@ -88,17 +146,19 @@ example of simple test
 
 ---
 
-### You're Free to Return Whatever You Need to Confirm Behavior! So do it!
-</hr>
-### You're Writing Code Around Your Tests, Not Tests Aroud Your Code
+### You're Free to Return Whatever You Need to Confirm Behavior!
+
+<hr>
+
+### Write Code Around Your Tests,</br> Not Tests Aroud Your Code
 
 ***
 
 # Pure Functions
 
-<p>Given the same input, always produces the same output</p>
-<p>Stateless</p>
-<p>Have no side-effects</p>
+- Given the same input, always produce the same output
+- Stateless
+- Have no side-effects
 
 ---
 
@@ -149,17 +209,25 @@ example of simple test
         //
     }
 
+---
+
+## Pure Functions => </br> Fewer Moving Parts => </br> Simpler Tests
+
 ***
 
-## Avoid Mocking
-### Mocking is a Layer of Indirection </br> Adds to Cognitive Load of Understanding the Test
+# Avoid Mocking
 
 ---
 
-### Pass Values Not Value Providers
+### Mocking is a Layer of Indirection </br> Which Adds Complexity to Your Test
 
-<p>Value Providers Require Setup</p>
-<p>Values Just Need to be Set = Less Noise</p>
+---
+
+### Pass Values, Not 'Value Providers'
+
+---
+
+## Value Providers Require Setup = Noise
 
 ---
 
@@ -192,6 +260,10 @@ example of simple test
 
 --- 
 
+### Values Just Need to be Set = Less Noise
+
+---
+
     [lang=cs]
     public string Add(int x, int y) => x + y;
 
@@ -206,6 +278,11 @@ example of simple test
 
         Assert.Equal(expected, sut);
     }
+
+---
+
+# Bonus
+### Forcing the Call Site to Provide the Values Helps Push/Limit This Kind of Complexity to the Boundary of Your Application
 
 ***
 
@@ -248,7 +325,8 @@ example of simple test
 ---
 
 ## Take Every Opportunity to Add Meaning to the Elements of Your Tests
-### Strive for Obvious
+<hr>
+## Strive for Obvious
 
 ***
 
@@ -257,7 +335,7 @@ example of simple test
 ---
 
 ## When Your Test Only Makes One Assertion
-### You Know What Exactly Passed/Failed
+### You Know Exactly What Passed/Failed
 
 ---
 
@@ -309,6 +387,12 @@ example of simple test
         // assert other service called with instance
     }
 
+---
+
+## A Unit is a Scenario
+<hr>
+## Isolate a Single Scenario in Your Tests
+
 *** 
 
 # Tools!
@@ -331,33 +415,54 @@ example of simple test
 
     [lang=cs]
     var fixture = new Fixture();
+
+    // creating a value type
     var name = fixture.Create<string>();
+
+    // creating a reference type
     var person = fixture.Create<Person>();
 
 ---
 
-## Using Build
+## Using Build to Specify Values
 
     [lang=cs]
     var fixture = new Fixture();
-    var name = fixture.Create<string>();
+
+    var name = "yo mamma";
+
     var person = fixture.Build<Person>()
         .With( p => p.Name, name);
 
 ---
 
-## Customizing
+## Customizing the Fixture
+
+---
+
+### Custom Value Types
 
     [lang=cs]
     var fixture = new Fixture();
+
+    // Now every string created will = 'asshat'!
     fixture.Register<string>(() => "asshat");
+    
     string result = fixture.Create<string>(); // = 'asshat'
 
-    var mc = fixture.Create<MyClass>();
-    fixture.Customize<MyViewModel>(ob => ob
-        .Do(x => x.AvailableItems.Add(mc))
-        .With(x => x.SelectedItem, mc));
+---
 
+### Custom Reference Types
+
+    [lang=cs]
+    var fixture = new Fixture();
+    var item = 123
+
+    fixture.Customize<MyViewModel>(ob => ob
+        .Do(x => x.AvailableItems.Add(item))
+        .With(x => x.SelectedItem, item));
+
+    /// mvm with values set from builder
     var mvm = fixture.Create<MyViewModel>();
 
 ---
@@ -470,8 +575,23 @@ example of simple test
 
 ---  
 
-TODO
-custom autodata using custom fixtures
+## Custom AutoData Using Custom Fixtures
+
+---
+
+    [lang=cs]
+    public class AutoFieldForwardData : AutoDataAttribute
+    {
+        public AutoFieldForwardData()
+            : base(new FieldForwardFixture()) { }
+    }
+
+    [Theory, AutoFieldForwardData]
+    public void Add_returns_expected_value(int x, int y)
+    {
+        // Generated data uses any customizations made 
+        // on FieldForwardFixture
+    }
 
 ---
 
@@ -494,15 +614,99 @@ custom autodata using custom fixtures
 
 ---
 
-mocking with FakeItEasy
+## Creating a Mock With FakeItEasy
+
+    [lang=cs]
+    var mockNumberService = A.Fake<INumberService>();
+
+    A.CallTo(() => mockNumberService.GetX())
+        .Returns(x);
 
 ---
 
-mocking with AutoFixture + FakeItEasy
+---
+
+## Creating a Mock With AuotFixture + FakeItEasy
+
+    [lang=cs]
+    var fixture = new Fixture()
+        .Customize(new AutoFakeItEasyCustomization());
+
+    var mockNumberService = fixture.Freeze<INumberService>();
+
+    A.CallTo(() => mockNumberService.GetX())
+        .Returns(x);
+
+[Learn About "Freeze" Here](http://blog.ploeh.dk/2010/03/17/AutoFixtureFreeze/)
 
 ---
 
-Mocking with AutoData
+## What's the Difference?
+
+<hr>
+
+Nothing
+
+---
+
+## So Why is This Valuable?
+
+<hr>
+
+We Only Use One Tools Vocabluary/Idioms, Which Adds Consistency, Which is Very Valuable
+
+---
+
+## Unlock Moar Power!
+
+<hr>
+
+## Custom AutoData + FakeItEasy
+
+---
+
+    [lang=cs]
+    public class AutoFieldForwardData : AutoDataAttribute
+    {
+        public AutoFieldForwardData()
+            : base(new FieldForwardFixture()) 
+        {
+            Customize(new AutoFakeItEasyCustomization());
+            ...
+        }
+    }
+
+---
+
+    [lang=cs]
+    [Theory, AutoFieldForwardData]
+    public void TryRegisterSession_caches_new_token_when_no_token_cached_for_user_id(
+        [Frozen]ICacheService<string,string> cacheService, 
+        MemoryCache blackList, 
+        string newToken, 
+        string userId)
+    {
+      var sut = new SessionManagementService(cacheService, blackList);
+
+      A.CallTo(() => cacheService.Get(userId))
+        .Returns(null);
+
+      var result = sut.TryRegisterSession(userId, newToken);
+
+      A.CallTo(() => cacheService.AddOrReplace(userId, newToken))
+        .MustHaveHappened();
+    }
+
+***
+
+## With Great Power Comes Great Responsibility
+
+---
+
+## These Tools Make it Easy to Abstract Away the Wrong Thing
+<hr>
+## Be Mindful to Keep All Relavent Information in the Body of Your Tests
+
 
 ***
 
