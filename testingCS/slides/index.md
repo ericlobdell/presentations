@@ -68,6 +68,11 @@
             .MustHaveHappened();
     }
 
+---
+
+### You're Free to Return Whatever You Need to Confirm Behavior! So do it!
+### You're Writing Code Around Your Tests, Not Tests Aroud Your Code
+
 ***
 
 # Pure Functions
@@ -126,17 +131,8 @@
 
 ***
 
-# Elements of Simple Tests
-
-## Readibility
-## Tests One Thing
+## Writing Tests That are Easy to Understand
  
-***
-
-***
-
-# Readibility
-
 ***
 
 ## Avoid Mocking
@@ -197,8 +193,8 @@
 
 ***
 
-## Be Explicit - Name Everything
-### No 'Magic Values'
+# Be Explicit 
+### Name Everything - No 'Magic Values'
 
 ---
 
@@ -215,7 +211,7 @@
  
 --- 
 
-## Sans Magic
+## Mortal
 
     [lang=cs]
     [Fact]
@@ -229,7 +225,6 @@
         var ex = Assert.Throws(() => sut.DoWork(userId, invalidWorkType));
     }
 
-
 ***
 
 # Test One Thing
@@ -241,8 +236,10 @@
 
 ---
 
+## If This Test Fails,<br/> What Went Wrong?
+
     [lang=cs]
-    public void Add(int x, int y)
+    public void DoesManyThings(int x, int y)
     {
         var z = myService.GetValue(x);
         myInstance.Property = z + y;
@@ -250,7 +247,7 @@
     };
 
     [Fact]
-    public void Add_works_correctly()
+    public void DoesManyThings_works_correctly()
     {
         // assert calls method on my service
 
@@ -261,8 +258,10 @@
 
 ---
 
+## If Any of These Tests Fail, We Know What Broke
+
     [lang=cs]
-    public void Add(int x, int y)
+    public void DoesManyThings(int x, int y)
     {
         var z = myService.GetValue(x);
         myInstance.Property = z + y;
@@ -270,19 +269,17 @@
     };
 
     [Fact]
-    public void Add_properly_calls_method_on_my_service()
+    public void DoesManyThings_properly_calls_method_on_my_service()
     {
         // assert calls method on my service
     }
-
     [Fact]
-    public void Add_sets_state_on_instance_correctly()
+    public void DoesManyThings_sets_state_on_instance_correctly()
     {
         // assert state set on instance correctly
     }
-
     [Fact]
-    public void Add_properly_calls_method_on_other_service_with_instance()
+    public void DoesManyThings_properly_calls_method_on_other_service_with_instance()
     {
         // assert other service called with instance
     }
@@ -301,6 +298,7 @@
 ***
 
 ## Using AutoFixture to Create Values and Instances
+[See Cheat Sheet to Learn More](https://github.com/AutoFixture/AutoFixture/wiki/Cheat-Sheet)
 
 ---
 
@@ -356,6 +354,11 @@
 ***
 
 ## Mocking with FakeItEasy
+[See Quickstart to Learn More](http://fakeiteasy.readthedocs.io/en/stable/quickstart/)
+
+---
+
+## We Use Mocking to Control and/or Confirm Functionality
 
 ---
 
@@ -376,10 +379,9 @@
         // 
     }
 
-
 ---
 
-## Using Mocks To Assert Functionality
+## Using Mocks To Confirm Functionality
 
     [Fact]
     public void Add_returns_expected_value()
@@ -406,9 +408,13 @@
 
 ---
 
-## Each Test is a Scene
-### Starring Roles, Supporting Roles,<br/> and Extras
-### Extras = Noise = Good use of AutoData
+## Think of Each Test as a Scene
+<hr/>
+### Starring Role (the SUT), </br>
+### Supporting Roles,<br/> 
+### and Extras
+</hr>
+### Extras = Good use of AutoData
 
 ---
 
@@ -420,7 +426,7 @@
         var y = 2; // extra
 
         var sut = Add(x,y); // star
-        var expected = 3; // supporting
+        var expected = x + y; // supporting
 
         Assert.Equal(expected, sut);
     }
@@ -439,6 +445,7 @@
 
 ---  
 
+TODO
 custom autodata using custom fixtures
 
 ---
